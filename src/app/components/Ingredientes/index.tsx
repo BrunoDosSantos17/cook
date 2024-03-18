@@ -1,14 +1,19 @@
 import { ScrollView, Alert } from "react-native";
 
 
-
 import { styles } from "./styles";
-import { Ingredient } from "../Ingrediente";
-import { useState } from "react";
+import { Ingredient, IngredientsProps } from "../Ingrediente";
+import { useState, useEffect } from "react";
 import { Selected } from "../Selected";
 import { router } from "expo-router";
+import { services } from "@/app/services";
 
-export function Ingredients() {
+
+type Props = {
+  ingredientes: IngredientsProps[] 
+}
+
+export function Ingredients({ ingredientes }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
 
   function handleToggleSelected(value: string) {
@@ -27,7 +32,7 @@ export function Ingredients() {
   }
 
   function handleSearch() {
-    router.navigate('../recipes')    
+    router.navigate('../recipes/' + selected)    
   }
 
   return (
@@ -35,13 +40,13 @@ export function Ingredients() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      {Array.from({ length: 100 }).map((item, index) => (
+      {ingredientes.map((item) => (
         <Ingredient
-          key={index}
-          name="Tomate"
-          image=""
-          selected={selected.includes(String(index))}
-          onPress={() => handleToggleSelected(String(index))}
+          key={item.name}
+          name={item.name}
+          image={`${services.storage.imagePath}/${item.image}`}
+          selected={selected.includes(item.name)}
+          onPress={() => handleToggleSelected(item.name)}
         />
       ))}
       {selected.length > 0 &&
